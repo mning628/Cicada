@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>Zk-Lock</module>
+        <module>Redis-Lock</module>
     </modules>
     <packaging>pom</packaging>
 
