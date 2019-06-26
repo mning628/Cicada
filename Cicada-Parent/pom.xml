@@ -5,11 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>Cicada-Parent</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>Cicada-Parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>Zk-Lock</module>
         <module>Redis-Lock</module>
+        <module>Distributed-Transaction-A</module>
+        <module>Distributed-Transaction-B</module>
     </modules>
     <packaging>pom</packaging>
 
