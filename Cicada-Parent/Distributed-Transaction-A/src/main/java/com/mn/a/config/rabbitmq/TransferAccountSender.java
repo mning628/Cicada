@@ -28,7 +28,6 @@ public class TransferAccountSender implements RabbitTemplate.ConfirmCallback
         businessSteam.setQueueId(correlationData.getId());
         businessStreamRepository.saveAndFlush(businessSteam);
 
-
         rabbitTemplate.setConfirmCallback(this);
         StringBuilder message = new StringBuilder();
         message.append(correlationData.getId());
