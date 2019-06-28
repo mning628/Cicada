@@ -16,13 +16,11 @@ public class BusinessStream
 
     private String accountNo;
 
-    private String targetBankNo;
 
     private String targetAccountNo;
 
     private Integer amount;
 
-    private String queueId;
 
     /**
      * 0: 已接受请求
@@ -54,16 +52,6 @@ public class BusinessStream
     public void setAccountNo(String accountNo)
     {
         this.accountNo = accountNo;
-    }
-
-    public String getTargetBankNo()
-    {
-        return targetBankNo;
-    }
-
-    public void setTargetBankNo(String targetBankNo)
-    {
-        this.targetBankNo = targetBankNo;
     }
 
     public String getTargetAccountNo()
@@ -106,13 +94,4 @@ public class BusinessStream
         this.lastUpdateTime = lastUpdateTime;
     }
 
-    public String getQueueId()
-    {
-        return queueId;
-    }
-
-    public void setQueueId(String queueId)
-    {
-        this.queueId = queueId;
-    }
 }

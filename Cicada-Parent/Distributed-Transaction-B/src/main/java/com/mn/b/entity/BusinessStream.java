@@ -16,8 +16,6 @@ public class BusinessStream
 
     private String fromAccountNo;
 
-    private String fromBankNo;
-
     private String accountNo;
 
     private Integer amount;
@@ -47,16 +45,6 @@ public class BusinessStream
     public void setFromAccountNo(String fromAccountNo)
     {
         this.fromAccountNo = fromAccountNo;
-    }
-
-    public String getFromBankNo()
-    {
-        return fromBankNo;
-    }
-
-    public void setFromBankNo(String fromBankNo)
-    {
-        this.fromBankNo = fromBankNo;
     }
 
     public String getAccountNo()

@@ -37,14 +37,19 @@ public class TransferAccountService
         //先将账户余额减少
         String identity = transferAccountRequestVo.getIdentity();
         Account account = accountRepository.findAccountByIdentity(identity);
+        //Todo 判断用户
         Integer money = account.getMoney();
         //要转账的钱数
         Integer amount = transferAccountRequestVo.getAmount();
-        if (money > amount)
+        if (money >= amount)
         {
             account.setMoney(money - amount);
         }
-        //TODO 如果小于，直接报错
+        //如果小于，直接报错
+        else
+        {
+            throw new RuntimeException("余额不足");
+        }
         accountRepository.save(account);
     }
 
@@ -70,8 +75,8 @@ public class TransferAccountService
 
     public void resolveResult(String businessId, String status)
     {
-        BusinessStream businessStream = businessStreamRepository.findByQueueId(businessId);
-        if (businessId != null)
+        BusinessStream businessStream = businessStreamRepository.findOne(Integer.valueOf(businessId));
+        if (businessStream != null)
         {
             if ("0".equals(status))
             {
@@ -81,7 +86,7 @@ public class TransferAccountService
                 String accountNo = businessStream.getAccountNo();
                 Account account = accountRepository.findAccountByIdentity(accountNo);
                 Integer money = account.getMoney();
-                account.setMoney(money+amount);
+                account.setMoney(money + amount);
                 accountRepository.save(account);
             }
             if ("1".equals(status))

@@ -7,6 +7,7 @@ import com.mn.b.repository.BusinessStreamRepository;
 import com.mn.b.util.HttpClientUtils;
 import com.mn.b.vo.TransferAccountRequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,43 +22,48 @@ public class TransferAccountService
     @Autowired
     BusinessStreamRepository businessStreamRepository;
 
+    @Value("${b.response.url:http://localhost:8080/BBank}")
+    String responseUrl;
+
     @Transactional
     public void transferAccount(TransferAccountRequestVo transferAccountRequestVo)
     {
+        //记录业务流水表  可以考虑加条状态，标记这条业务数据是否正常
         String businessId = transferAccountRequestVo.getBusinessId();
-        //保证消费的幂等性，根据流水id进行管控
-        BusinessStream businessStream = businessStreamRepository.findByBusinessId(businessId);
-        if (businessStream != null)
-        {
-            System.out.println("this business has resolve.");
-            return;
-        }
-
         String accountId = transferAccountRequestVo.getAccountId();
         Integer money = transferAccountRequestVo.getMoney();
-        //先将账户余额加上
-        Account account = accountRepository.findByIdentity(accountId);
-        if (account == null)
-        {
-            return;
-        }
-        Integer oldMoney = account.getMoney();
-        account.setMoney(money + oldMoney);
-        accountRepository.save(account);
-
-        //记录业务流水表
         BusinessStream newBusinessStream = new BusinessStream();
         newBusinessStream.setAccountNo(accountId);
         newBusinessStream.setBusinessId(businessId);
         newBusinessStream.setAmount(money);
+        //可以根据状态判断有没有正确返回给对方银行，若发送失败则重新发送
+        newBusinessStream.setStatus("0");
         businessStreamRepository.saveAndFlush(newBusinessStream);
+
+        //加账户余额
+        Account account = accountRepository.findByIdentity(accountId);
+        if (account == null)
+        {
+            throw new RuntimeException("账户不存在.");
+        }
+        Integer oldMoney = account.getMoney();
+        account.setMoney(money + oldMoney);
+        accountRepository.save(account);
     }
 
     public void sendResultToAbank(String businessId, String status)
     {
         //响应给A银行结果
-        //TODO  url配置对端A银行的响应结果,,0为失败，1为成功
-        String url = "   http://localhost:8080/BBank" + "/" + businessId + "/" + status;
-        HttpClientUtils.executeGet(url);
+        String url = responseUrl + "/" + businessId + "/" + status;
+        //TODO  发送消息可能会遇到网络异常，加重试机制
+        try
+        {
+            HttpClientUtils.executeGet(url);
+        }
+        catch (Exception e)
+        {
+            //TODO  记录状态再次回调
+            e.printStackTrace();
+        }
     }
 }

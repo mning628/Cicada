@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface BusinessStreamRepository extends JpaRepository<BusinessStream, Integer>
 {
-    BusinessStream findByQueueId(String queueId);
-
     List<BusinessStream> findByStatus(String status);
 }

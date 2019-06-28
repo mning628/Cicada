@@ -4,6 +4,7 @@ import com.mn.a.util.HttpClientUtils;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -11,6 +12,9 @@ import java.io.IOException;
 @Component
 public class TransferAccountReceiver
 {
+    @Value("${transfer.request.url:http://localhost:8081/transfer}")
+    String transferRequestUrl;
+
     @RabbitListener(queues = RabbitMqConfig.QUEUE_NAME)
     public void receiver(Message message, Channel channel) throws IOException
     {
@@ -34,9 +38,8 @@ public class TransferAccountReceiver
 
     private void sendMessageToBbank(String[] split)
     {
-        //TODO  B bank开放的请求转账的接口
-        String url = "http://localhost:8081/transfer";
-        String resultUrl = url + "/" + split[0] + "/" + split[1] + "/" + split[2];
+        String resultUrl = transferRequestUrl + "/" + split[0] + "/" + split[1] + "/" + split[2];
+        //Todo 异步请求更好一些
         HttpClientUtils.executeGet(resultUrl);
     }
 

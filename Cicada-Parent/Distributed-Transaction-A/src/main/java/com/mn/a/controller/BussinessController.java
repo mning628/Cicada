@@ -22,7 +22,6 @@ public class BussinessController
     @GetMapping(value = "BBank/{businessId}/{status}")
     public void getBBankResult(@PathVariable("businessId") String businessId, @PathVariable("status") String status)
     {
-
         transferAccountService.resolveResult( businessId,  status);
     }
 

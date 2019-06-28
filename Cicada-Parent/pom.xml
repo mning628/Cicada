@@ -12,6 +12,7 @@
         <module>Redis-Lock</module>
         <module>Distributed-Transaction-A</module>
         <module>Distributed-Transaction-B</module>
+        <module>Cicada-Mycat</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -22,6 +23,12 @@
         <relativePath/>
     </parent>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -30,14 +37,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
 
     <build>
         <plugins>

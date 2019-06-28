@@ -8,8 +8,6 @@ import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class TransferAccountSender implements RabbitTemplate.ConfirmCallback
 {
@@ -22,22 +20,17 @@ public class TransferAccountSender implements RabbitTemplate.ConfirmCallback
 
     public void send(TransferAccountRequestVo transferAccountRequestVo, Integer businessSteamId)
     {
-
-        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
-        BusinessStream businessSteam = businessStreamRepository.findOne(businessSteamId);
-        businessSteam.setQueueId(correlationData.getId());
-        businessStreamRepository.saveAndFlush(businessSteam);
-
+        //此id用businessSteamId也是可以的
+        CorrelationData correlationData = new CorrelationData(String.valueOf(businessSteamId));
         rabbitTemplate.setConfirmCallback(this);
+        //message--> 随机id:接受账户:转入金额
+        //随机id用于对端做幂等校验
         StringBuilder message = new StringBuilder();
         message.append(correlationData.getId());
         message.append(":");
         message.append(transferAccountRequestVo.getTargetAccountNo());
         message.append(":");
         message.append(transferAccountRequestVo.getAmount());
-
-        System.out.println(message.toString());
-
         this.rabbitTemplate.convertAndSend("", RabbitMqConfig.QUEUE_NAME, message.toString(), correlationData);
     }
 
@@ -45,7 +38,7 @@ public class TransferAccountSender implements RabbitTemplate.ConfirmCallback
     public void confirm(CorrelationData correlationData, boolean ack, String s)
     {
         String id = correlationData.getId();
-        BusinessStream businessStream = businessStreamRepository.findByQueueId(id);
+        BusinessStream businessStream = businessStreamRepository.findOne(Integer.parseInt(id));
         if (ack)
         {
             //已放入消息队列
