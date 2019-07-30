@@ -13,6 +13,8 @@
         <module>Distributed-Transaction-A</module>
         <module>Distributed-Transaction-B</module>
         <module>Cicada-Mycat</module>
+<!--        <module>Cicada-Spring-Boot-Starter</module>-->
+        <module>Cicada-Starter-Use</module>
     </modules>
     <packaging>pom</packaging>
 
